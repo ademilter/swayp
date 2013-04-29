@@ -53,7 +53,7 @@ function onMove(e) {
         body.classList.add("drag");
 
         if (diffX > window.innerWidth - 96) diffX = window.innerWidth - 96
-        $("h2").html(diffX)
+        //$("h2").html(diffX)
 
         // RIGHT SWIPE
         if (finishX > startX) {
@@ -65,7 +65,6 @@ function onMove(e) {
         else {
             if (body.classList.contains('navigation-open'))
                 body.style.webkitTransform = 'translate3d(' + ((window.innerWidth - 96) - diffX) + 'px, 0, 0)';
-
             else move = ""
         }
     }
