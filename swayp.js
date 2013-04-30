@@ -1,12 +1,10 @@
 /**
- * Created with JetBrains WebStorm.
- * User: iAdem
- * Date: 4/28/13
- * Time: 11:09 PM
- * To change this template use File | Settings | File Templates.
+ * Author   : Adem ilter
+ * Date     : 3/28/13
+ * Time     : 11:09 PM
+ * Twitter  : @ademilter
+ * Github   : ademilter
  */
-
-// SWIPE MENU
 
 var body = document.getElementById("body"),
     tanO = .8,
@@ -17,25 +15,30 @@ var body = document.getElementById("body"),
     diffX = 0,
     startY = 0,
     finishY = 0,
-    diffY = 0;
+    diffY = 0,
+    corner = 60;
 
-
-// TOUCH START
 
 document.body.addEventListener("touchstart", function (e) {
     onStart(e);
 });
 
+document.body.addEventListener("touchmove", function (e) {
+    onMove(e);
+});
+
+document.body.addEventListener('touchend', function () {
+    touchEnd()
+});
+document.body.addEventListener('touchcancel', function () {
+    touchEnd()
+});
+
+
 function onStart(e) {
     startY = e.pageY;
     startX = e.pageX;
 }
-
-// TOUCH MOVE
-
-document.body.addEventListener("touchmove", function (e) {
-    onMove(e);
-});
 
 function onMove(e) {
 
@@ -46,29 +49,31 @@ function onMove(e) {
     tan = diffY / diffX;
 
     // SWIPE
-    if (tan < tanO || move != "scroll") {
+    if ((tan < tanO && move != "scroll") || move == "swipe") {
 
-        e.preventDefault();
         move = "swipe";
         body.classList.add("drag");
 
-        if (diffX > window.innerWidth - 96) diffX = window.innerWidth - 96
-        //$("h2").html(diffX)
 
         // RIGHT SWIPE
         if (finishX > startX) {
-            if (!body.classList.contains('navigation-open'))
-                body.style.webkitTransform = 'translate3d(' + diffX + 'px, 0, 0)'
-            else move = ""
+            if (!body.classList.contains('navigation-open')) {
+                body.style.webkitTransform = 'translate3d(' + diffX + 'px, 0, 0)';
+                e.preventDefault();
+            }
+            else move = "scroll"
         }
         // LEFT SWIPE
         else {
-            if (body.classList.contains('navigation-open'))
-                body.style.webkitTransform = 'translate3d(' + ((window.innerWidth - 96) - diffX) + 'px, 0, 0)';
-            else move = ""
+            if (diffX > window.innerWidth - corner) diffX = window.innerWidth - corner
+
+            if (body.classList.contains('navigation-open')) {
+                body.style.webkitTransform = 'translate3d(' + ((window.innerWidth - corner) - diffX) + 'px, 0, 0)';
+                e.preventDefault();
+            }
+            else move = "scroll"
         }
     }
-
     // VERTICAL SCROLL
     else if (move != "swipe") {
         move = "scroll"
@@ -76,30 +81,19 @@ function onMove(e) {
 }
 
 
-// TOUCH END
-
-
-document.body.addEventListener('touchend', function () {
-    touchEnd()
-});
-document.body.addEventListener('touchcancel', function () {
-    touchEnd()
-});
-
 function touchEnd() {
     body.classList.remove("drag");
 
     if (move == "swipe") {
         if (!body.classList.contains('navigation-open')) {
-            if (diffX >= 123) navigationStatu(true)
+            if (diffX >= corner) navigationStatu(true)
             else navigationStatu(false)
         }
         else {
-            if (diffX >= 123) navigationStatu(false)
+            if (diffX >= corner) navigationStatu(false)
             else navigationStatu(true)
         }
     }
-
     move = "";
 }
 
@@ -108,7 +102,7 @@ function touchEnd() {
 function navigationStatu(statu) {
     if (statu) {
         body.classList.add("navigation-open");
-        body.style.webkitTransform = 'translate3d(' + (window.innerWidth - 96) + 'px, 0, 0)';
+        body.style.webkitTransform = 'translate3d(' + (window.innerWidth - corner) + 'px, 0, 0)';
     }
     else {
         body.classList.remove("navigation-open");
